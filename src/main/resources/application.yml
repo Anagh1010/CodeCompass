@@ -1,0 +1,30 @@
+spring:
+  config:
+    import: optional:file:.secrets[.properties]
+  application:
+    name: codebase-qa
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+      chat:
+        options:
+          model: ${OLLAMA_CHAT_MODEL:qwen2.5-coder:3b}
+          temperature: 0.1
+          num-ctx: 4096
+          num-predict: 900
+      embedding:
+        options:
+          model: ${OLLAMA_EMBEDDING_MODEL:nomic-embed-text}
+codecompass:
+  gemini:
+    api-key: ${GEMINI_API_KEY:${gemini_api_key:}}
+    model: ${GEMINI_CHAT_MODEL:gemini-3.8-flash}
+  vector-file: ${CODECOMPASS_VECTOR_FILE:./data/ollama-code-vectors.json}
+  index-state-file: ${CODECOMPASS_INDEX_STATE_FILE:./data/index-state.json}
+server:
+  port: ${PORT:8080}
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info

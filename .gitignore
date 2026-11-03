@@ -1,0 +1,11 @@
+target/
+data/
+.idea/
+*.iml
+.secrets
+atlas-credentials.env
+.DS_Store
+frontend/node_modules/
+frontend/.vite/
+src/main/resources/static/index.html
+src/main/resources/static/assets/
