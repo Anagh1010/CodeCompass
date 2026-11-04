@@ -182,7 +182,7 @@ export default function App() {
                       <div className="source-list" aria-label="Sources">
                         {message.sources.map((source, sourceIndex) => (
                           <span key={`${source.path}-${source.line}`} className="source-pill">
-                            <Code2 size={13} />{source.path}:{source.line}<span className="source-number">[{sourceIndex + 1}]</span>
+                            <Code2 size={13} />{source.path}:{source.line}-{source.endLine}<span className="source-number">[{sourceIndex + 1}]</span>
                           </span>
                         ))}
                       </div>

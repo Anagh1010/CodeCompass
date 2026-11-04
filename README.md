@@ -1,6 +1,6 @@
 # CodeCompass
 
-CodeCompass indexes repositories locally with Ollama embeddings and answers questions using either local Ollama or the Gemini Developer API. The API returns source paths and line numbers, not code excerpts.
+CodeCompass indexes repositories locally with Ollama embeddings and answers questions using either local Ollama or the Gemini Developer API. Its retrieval-augmented generation (RAG) flow analyzes the question, searches by BM25 keywords and semantic similarity, fuses and reranks the candidates, assembles a bounded source context, then generates a cited answer. The API returns source paths and line ranges, not code excerpts.
 
 ## Requirements
 
@@ -58,6 +58,7 @@ Open http://localhost:8080. The generated Vite assets are served by Spring Boot.
 | `OLLAMA_CHAT_MODEL` | `qwen2.5-coder:3b` | Chat model |
 | `OLLAMA_EMBEDDING_MODEL` | `nomic-embed-text` | Embedding model |
 | `CODECOMPASS_VECTOR_FILE` | `./data/ollama-code-vectors.json` | Persistent vector index location |
+| `CODECOMPASS_KEYWORD_INDEX_FILE` | `./data/keyword-index.json` | Persistent BM25 corpus for hybrid retrieval |
 | `CODECOMPASS_INDEX_STATE_FILE` | `./data/index-state.json` | Repository and index metadata |
 | `GEMINI_API_KEY` | value from `.secrets` | Optional Gemini Developer API key |
 | `GEMINI_CHAT_MODEL` | `gemini-3.8-flash` | Gemini Q&A model |
@@ -67,6 +68,6 @@ The REST API is `POST /api/index` with `{ "path": "~/projects/repository", "reus
 
 To use the ignored `.secrets` properties file, add `gemini_api_key=YOUR_KEY` to it. Alternatively, set `GEMINI_API_KEY` in the environment. Gemini is optional; local Q&A does not need this key.
 
-The scanner indexes common programming, configuration, and documentation formats, skips generated/dependency directories, and ignores files larger than 1 MB. The initial vector store is local and single-process; use a persistent vector database when moving to shared or large deployments.
+The scanner indexes common programming, configuration, and documentation formats. It prunes common dependency, build, cache, generated, and data directories before traversing them; honors nested `.gitignore` and `.codecompassignore` rules; skips common lockfiles, generated bundles/maps, credential files, and source files over 1 MB. Each repository is bounded to 100,000 traversed paths, 5,000 source files, 100 MB of source, and 3,000 chunks by default. Configure these ceilings with `CODECOMPASS_INDEX_MAX_ENTRIES`, `CODECOMPASS_INDEX_MAX_FILES`, `CODECOMPASS_INDEX_MAX_TOTAL_BYTES`, and `CODECOMPASS_INDEX_MAX_CHUNKS`. A limit error happens before the saved index is replaced. Put additional exclusions in a `.codecompassignore` file at the repository root using standard Git ignore syntax. Retrieved chunks are ranked with reciprocal-rank fusion and code identifier matches, then limited to relevant excerpts from up to two sections per file. The vector store is local and single-process; use a persistent vector database when moving to shared or large deployments.
 
-The **Use existing index** toggle is on by default: an existing matching index is reused; turn it off to rebuild the index. The vector data and repository metadata are stored locally under `./data/`.
+The **Use existing index** toggle is on by default: a matching vector and keyword index pair is reused; turn it off to rebuild both indexes. The vector data, BM25 corpus, and repository metadata are stored locally under `./data/`.

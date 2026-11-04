@@ -20,7 +20,13 @@ codecompass:
     api-key: ${GEMINI_API_KEY:${gemini_api_key:}}
     model: ${GEMINI_CHAT_MODEL:gemini-3.8-flash}
   vector-file: ${CODECOMPASS_VECTOR_FILE:./data/ollama-code-vectors.json}
+  keyword-index-file: ${CODECOMPASS_KEYWORD_INDEX_FILE:./data/keyword-index.json}
   index-state-file: ${CODECOMPASS_INDEX_STATE_FILE:./data/index-state.json}
+  indexing:
+    max-files: ${CODECOMPASS_INDEX_MAX_FILES:5000}
+    max-entries: ${CODECOMPASS_INDEX_MAX_ENTRIES:100000}
+    max-total-bytes: ${CODECOMPASS_INDEX_MAX_TOTAL_BYTES:104857600}
+    max-chunks: ${CODECOMPASS_INDEX_MAX_CHUNKS:3000}
 server:
   port: ${PORT:8080}
 management:
