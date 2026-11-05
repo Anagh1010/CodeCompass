@@ -1,6 +1,6 @@
 # CodeCompass
 
-CodeCompass indexes repositories locally with Ollama embeddings and answers questions using either local Ollama or the Gemini Developer API. Its retrieval-augmented generation (RAG) flow analyzes the question, searches by BM25 keywords and semantic similarity, fuses and reranks the candidates, assembles a bounded source context, then generates a cited answer. The API returns source paths and line ranges, not code excerpts.
+CodeCompass indexes repositories locally with Ollama embeddings and answers questions using either local Ollama or the Gemini Developer API. Its retrieval-augmented generation (RAG) flow analyzes the question, searches by BM25 keywords, semantic similarity, and code identifiers, fuses and reranks the candidates, checks that retrieved excerpts match the question's topic, assembles a bounded source context, then generates a cited answer. If the model omits inline citations, CodeCompass adds references to relevant retrieved chunks. The API returns source paths and line ranges, not retrieved code excerpts.
 
 ## Requirements
 
@@ -17,7 +17,7 @@ ollama pull qwen2.5-coder:3b
 ollama pull nomic-embed-text
 ```
 
-The first model answers locally; the second creates embeddings. Indexing uses Ollama in either Q&A mode. Nomic receives `search_document:`-prefixed chunks with file path and language context, and `search_query:`-prefixed semantic queries. Select **Local Qwen 3B** or **Gemini 3.8 Flash** in the chat panel. Gemini receives the retrieved source excerpts for the selected question; the API key stays on the server. Indexing sends batches of eight chunks to Ollama and chunks source near declarations where possible.
+The first model answers locally; the second creates embeddings. Indexing always uses Ollama. Nomic receives `search_document:`-prefixed chunks with file path and language context, and `search_query:`-prefixed semantic queries. Select **Local Qwen 3B** or **Gemini 3.8 Flash** in the chat panel. Gemini receives the retrieved source excerpts for the selected question; the API key stays on the server. Indexing sends batches of eight chunks to Ollama and chunks source near declarations where possible.
 
 ## Development
 

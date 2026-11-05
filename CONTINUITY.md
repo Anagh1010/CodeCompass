@@ -64,5 +64,6 @@
 - 2026-11-04 [TOOL] Maven package succeeded after scanner changes; no tests or live re-index run.
 - 2026-11-04 [TOOL] Maven/Spring Boot and Vite are stopped; no port 8080/5173 listener. Ollama Homebrew service is stopped.
 - 2026-11-05 [TOOL] Maven package succeeded after adding Nomic task prefixes and embedding-only file/language context; no tests or live re-index run.
+- 2026-11-05 [CODE] README now documents all-Ollama indexing, Nomic prefixes, topical evidence checks, and automatic source references for uncited model output.
 - 2026-11-04 [TOOL] Maven package succeeded after RAG evidence/citation guard changes; no tests or live model queries were run.
 - 2026-11-04 [TOOL] Maven package succeeded after preserving technical identifiers and auto-citing relevant chunks when model output omits markers; no live query run.
