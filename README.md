@@ -17,7 +17,7 @@ ollama pull qwen2.5-coder:3b
 ollama pull nomic-embed-text
 ```
 
-The first model answers locally; the second creates embeddings. Indexing uses Ollama in either Q&A mode. Select **Local Qwen 3B** or **Gemini 3.8 Flash** in the chat panel. Gemini receives the retrieved source excerpts for the selected question; the API key stays on the server. Indexing sends batches of eight chunks to Ollama and chunks source near declarations where possible.
+The first model answers locally; the second creates embeddings. Indexing uses Ollama in either Q&A mode. Nomic receives `search_document:`-prefixed chunks with file path and language context, and `search_query:`-prefixed semantic queries. Select **Local Qwen 3B** or **Gemini 3.8 Flash** in the chat panel. Gemini receives the retrieved source excerpts for the selected question; the API key stays on the server. Indexing sends batches of eight chunks to Ollama and chunks source near declarations where possible.
 
 ## Development
 

@@ -1,5 +1,6 @@
 package dev.codecompass.qa;
 
+import dev.codecompass.embedding.NomicEmbeddingText;
 import dev.codecompass.indexing.KeywordCodeSearch;
 import org.springframework.ai.document.Document;
 import org.springframework.ai.vectorstore.SearchRequest;
@@ -17,10 +18,12 @@ public class HybridRetriever {
 
     private final VectorStore vectorStore;
     private final KeywordCodeSearch keywordSearch;
+    private final NomicEmbeddingText embeddingText;
 
-    public HybridRetriever(VectorStore vectorStore, KeywordCodeSearch keywordSearch) {
+    public HybridRetriever(VectorStore vectorStore, KeywordCodeSearch keywordSearch, NomicEmbeddingText embeddingText) {
         this.vectorStore = vectorStore;
         this.keywordSearch = keywordSearch;
+        this.embeddingText = embeddingText;
     }
 
     public RankedCandidates retrieve(RagQuery query) {
@@ -34,7 +37,7 @@ public class HybridRetriever {
         }
         if (query.startupIntent()) {
             List<Document> startupFiles = vectorStore.similaritySearch(SearchRequest.builder()
-                    .query("application startup command run script main entry point")
+                    .query(embeddingText.forQuery("application startup command run script main entry point"))
                     .topK(8).filterExpression(STARTUP_FILE_FILTER).build());
             channels.add(new RankedCandidates.RankedList("startup", 1.35, startupFiles));
         }
@@ -43,6 +46,6 @@ public class HybridRetriever {
 
     private List<Document> vectorSearch(String query, int topK, double threshold) {
         return vectorStore.similaritySearch(SearchRequest.builder()
-                .query(query).topK(topK).similarityThreshold(threshold).build());
+                .query(embeddingText.forQuery(query)).topK(topK).similarityThreshold(threshold).build());
     }
 }

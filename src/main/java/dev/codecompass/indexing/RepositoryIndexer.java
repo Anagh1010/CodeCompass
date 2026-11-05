@@ -1,5 +1,6 @@
 package dev.codecompass.indexing;
 
+import dev.codecompass.embedding.NomicEmbeddingText;
 import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +18,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Service
 public class RepositoryIndexer {
     private static final int EMBEDDING_BATCH_SIZE = 8;
-    private static final int INDEX_VERSION = 7;
+    private static final int INDEX_VERSION = 8;
     private final CodeFileScanner scanner;
     private final CodeChunker chunker;
     private final RepositoryPathResolver pathResolver;
@@ -26,12 +27,14 @@ public class RepositoryIndexer {
     private final SimpleVectorStore vectorStore;
     private final Path vectorFile;
     private final int maxChunks;
+    private final NomicEmbeddingText embeddingText;
 
     public RepositoryIndexer(CodeFileScanner scanner, CodeChunker chunker, RepositoryPathResolver pathResolver,
                              RepositoryIndexStateStore stateStore, KeywordCodeSearch keywordSearch,
                              SimpleVectorStore vectorStore,
                              @Value("${codecompass.vector-file:./data/ollama-code-vectors.json}") String vectorFile,
-                             @Value("${codecompass.indexing.max-chunks:3000}") int maxChunks) {
+                             @Value("${codecompass.indexing.max-chunks:3000}") int maxChunks,
+                             NomicEmbeddingText embeddingText) {
         this.scanner = scanner;
         this.chunker = chunker;
         this.pathResolver = pathResolver;
@@ -41,6 +44,7 @@ public class RepositoryIndexer {
         this.vectorFile = Path.of(vectorFile);
         if (maxChunks < 1) throw new IllegalArgumentException("Index chunk limit must be positive");
         this.maxChunks = maxChunks;
+        this.embeddingText = embeddingText;
     }
 
     public IndexResult index(String requestedPath, boolean reuseExisting) throws IOException {
@@ -63,10 +67,11 @@ public class RepositoryIndexer {
             }
         }
         if (documents.isEmpty()) throw new IllegalStateException("No supported source files were found in " + root);
+        List<Document> embeddingDocuments = documents.stream().map(embeddingText::forIndexing).toList();
         if (Files.exists(vectorFile)) vectorStore.delete("path != ''");
-        for (int start = 0; start < documents.size(); start += EMBEDDING_BATCH_SIZE) {
-            int end = Math.min(start + EMBEDDING_BATCH_SIZE, documents.size());
-            vectorStore.add(documents.subList(start, end));
+        for (int start = 0; start < embeddingDocuments.size(); start += EMBEDDING_BATCH_SIZE) {
+            int end = Math.min(start + EMBEDDING_BATCH_SIZE, embeddingDocuments.size());
+            vectorStore.add(embeddingDocuments.subList(start, end));
         }
         Files.createDirectories(vectorFile.toAbsolutePath().getParent());
         vectorStore.save(vectorFile.toFile());

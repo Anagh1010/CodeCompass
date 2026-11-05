@@ -5,7 +5,7 @@
 - 2026-11-03 [USER] Runtime choice: Ollama with `qwen2.5-coder:3b` (4096 context) and `nomic-embed-text`, for M2/8 GB.
 - 2026-11-03 [CODE] App has repository indexing, persistent local vector store, reuse toggle, REST Q&A, and static UI.
 - 2026-11-03 [CODE] Q&A now combines keyword and vector retrieval; keyword chunks are cached after loading/indexing.
-- 2026-11-04 [CODE] Scanner prunes ignored directories, honors `.gitignore`/`.codecompassignore`, excludes generated and secret-like files, and enforces scan ceilings; index version 7 requires refresh.
+- 2026-11-05 [CODE] Nomic embeddings use document/query task prefixes plus file/language context; indexed vector format version 8 requires refresh.
 - 2026-11-03 [CODE] Answer API/UI return file-and-line references only; source excerpts are not returned or displayed.
 - 2026-11-03 [USER] Provider choice: offer local Ollama or Gemini for Q&A.
 - 2026-11-03 [CODE] Added Q&A provider selector; Ollama remains the default, Gemini 3.8 Flash uses server-side key from `.secrets` or `GEMINI_API_KEY`.
@@ -18,7 +18,7 @@
 - 2026-11-03 [TOOL] Stopped Maven Java server and Homebrew Ollama service; ports 8080, 5173, and 11434 have no listeners.
 - 2026-11-03 [TOOL] Maven package succeeded after retrieval, UI, and Gemini provider changes.
 - 2026-11-03 [USER] User requests a proper RAG pipeline.
-- 2026-11-04 [CODE] RAG checks topic overlap, preserves technical identifiers such as `GPS`, and adds valid references to relevant retrieved chunks when the model omits inline citations.
+- 2026-11-05 [CODE] RAG checks topic overlap, preserves technical identifiers such as `GPS`, and adds references to relevant retrieved chunks when the model omits inline citations.
 - 2026-11-04 [CODE] BM25 chunks are persisted alongside vectors in `data/keyword-index.json`; reuse requires matching repository and index version 6.
 - 2026-11-03 [TOOL] Vite build and Maven package succeeded after RAG pipeline changes; no tests were run.
 - 2026-11-04 [USER] User reports self-indexing is taking a long time.
@@ -41,7 +41,7 @@
 ## Done (recent)
 - 2026-11-03 [CODE] Implemented Spring Boot API, repository scanner/chunker, vector retrieval, grounded answers, and browser UI.
 - 2026-11-04 [CODE] Added `reuseExisting` true/false toggle; index format was version 6 before scanner hardening.
-- 2026-11-04 [CODE] Added Git-compatible repository ignore rules and bounded scans/indexes; index format now version 7.
+- 2026-11-05 [CODE] Added Git-compatible repository ignore rules and bounded scans/indexes; index format now version 7 before embedding-prefix change.
 - 2026-11-04 [CODE] Added BM25, semantic/symbol channels, reciprocal-rank fusion, reranking, bounded context, line citations, and evidence/citation guards.
 - 2026-11-03 [CODE] Added Gemini Q&A provider selection and server-side API key loading.
 - 2026-11-03 [CODE] Increased answer detail instructions and output limits for both providers.
@@ -60,8 +60,9 @@
 - 2026-11-03 [CODE] `CONTINUITY.md`
 
 ## Receipts
-- 2026-11-04 [TOOL] Prior persisted CodeCompass index: 40 files / 82 chunks, index version 6; version 7 will trigger re-index.
+- 2026-11-04 [TOOL] Prior persisted CodeCompass index: 40 files / 82 chunks, index version 6; version 8 will trigger re-index.
 - 2026-11-04 [TOOL] Maven package succeeded after scanner changes; no tests or live re-index run.
 - 2026-11-04 [TOOL] Maven/Spring Boot and Vite are stopped; no port 8080/5173 listener. Ollama Homebrew service is stopped.
+- 2026-11-05 [TOOL] Maven package succeeded after adding Nomic task prefixes and embedding-only file/language context; no tests or live re-index run.
 - 2026-11-04 [TOOL] Maven package succeeded after RAG evidence/citation guard changes; no tests or live model queries were run.
 - 2026-11-04 [TOOL] Maven package succeeded after preserving technical identifiers and auto-citing relevant chunks when model output omits markers; no live query run.

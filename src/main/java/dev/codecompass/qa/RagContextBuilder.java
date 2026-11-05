@@ -1,5 +1,6 @@
 package dev.codecompass.qa;
 
+import dev.codecompass.embedding.NomicEmbeddingText;
 import org.springframework.ai.document.Document;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +17,11 @@ public class RagContextBuilder {
     private static final int MAX_CHUNK_CHARACTERS = 2_200;
     private static final int MAX_CHUNKS = 6;
     private static final int MAX_CHUNKS_PER_FILE = 2;
+    private final NomicEmbeddingText embeddingText;
+
+    public RagContextBuilder(NomicEmbeddingText embeddingText) {
+        this.embeddingText = embeddingText;
+    }
 
     public RagContext build(List<Document> rankedDocuments) {
         List<Document> selected = new ArrayList<>();
@@ -35,7 +41,7 @@ public class RagContextBuilder {
 
             int remaining = MAX_CONTEXT_CHARACTERS - contextSize;
             int allowance = Math.min(MAX_CHUNK_CHARACTERS, remaining);
-            String excerpt = excerpt(document.getText(), allowance);
+            String excerpt = excerpt(embeddingText.sourceText(document.getText()), allowance);
             if (excerpt.isBlank()) continue;
             Map<String, Object> metadata = new HashMap<>(document.getMetadata());
             int excerptEndLine = startLine + (int) excerpt.chars().filter(character -> character == '\n').count();
