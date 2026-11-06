@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
+import ThemeSelector from "./ThemeSelector.jsx";
 import {
   ArrowDown, ArrowRight, ArrowUp, Check, ChevronDown, CircleHelp, Code2,
   FolderGit2, LoaderCircle, MessageSquareText, Search, ShieldCheck, Sparkles,
@@ -137,6 +138,8 @@ export default function App() {
       <main className="main-panel" id="home">
         <header className="topbar">
           <div className="breadcrumb"><span>Workspace</span><ChevronDown size={14} /><strong>Codebase Q&amp;A</strong></div>
+          <div className="topbar-controls">
+          <ThemeSelector />
           <label className="model-picker">
             <span>MODEL</span>
             <select value={provider} onChange={(event) => setProvider(event.target.value)} aria-label="Answer model">
@@ -145,6 +148,7 @@ export default function App() {
             </select>
             <ChevronDown className="picker-chevron" size={13} />
           </label>
+          </div>
         </header>
 
         <section className="conversation-area" ref={conversationRef}>
